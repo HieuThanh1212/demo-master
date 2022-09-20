@@ -119,7 +119,7 @@ public class ReceivableController {
             return null;
         }
     }
-
+            //hihi
     @GetMapping(value = "/sendmail")
     public ResponseEntity<ResponseDto> sendReceivabletoBill(@PathVariable int id) {
         try {
