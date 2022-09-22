@@ -120,15 +120,15 @@ public class ReceivableController {
         }
     }
             //hihi
-    @GetMapping(value = "/sendmail")
+    @GetMapping(value = "/{id}/sendmail")
     public ResponseEntity<ResponseDto> sendReceivabletoBill(@PathVariable int id) {
         try {
             Receivable receivable = receivableService.getByIdReceivable(id);
             if (receivable == null) {
                 return responseUtil.getSuccessResponse("not found receivable");
             }
-            //receivableService.sendMailToUser(receivable);
-            //return responseUtil.getSuccessResponse(receivableService.formatEmailReceivable(receivable));
+            receivableService.sendMailToUser(receivable);
+            return responseUtil.getSuccessResponse(receivableService.formatEmailReceivable(receivable));
         } catch (Exception e) {
             e.printStackTrace();
 

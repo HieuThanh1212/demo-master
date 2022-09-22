@@ -6,10 +6,15 @@ import com.vmo.springboot.Demo.dto.Respone.ReceivableResponseDto;
 import com.vmo.springboot.Demo.model.*;
 import com.vmo.springboot.Demo.repositories.IReceivableRepository;
 import com.vmo.springboot.Demo.services.Interface.IGenericService;
+import com.vmo.springboot.Demo.services.mail.MailService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +28,8 @@ public class ReceivableServiceIpml  {
     @Autowired
     WaterBillServiceIpml waterBillService;
 
-//    @Autowired
-//    EmailService emailService;
+   @Autowired
+   MailService emailService;
 
     @Autowired
     ServiceOtherServicesIpml serviceOtherService;
@@ -211,5 +216,50 @@ public class ReceivableServiceIpml  {
             s += serviceOther.toString();
         }
         return s;
+    }
+
+
+        public void sendMailToUser(Receivable receivable)  {
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd").format(new java.util.Date());
+        System.out.println("Test: " + timeStamp);
+            try {
+                emailService.sendEmail(
+                        receivable.getLeases().getTenant().getEmail(),
+                        timeStamp + "[#Phong_" + receivable.getLeases().getApartment().getName() + "] HOÁ ĐƠN CẦN THANH TOÁN ",
+                        formatEmailReceivable(receivable)
+                );
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+
+    @Transactional
+    public String formatEmailReceivable(Receivable receivable) {
+        return
+                "PHÍ DỊCH VỤ CĂN HỘ " + receivable.getLeases().getApartment().getName() +
+                        "\nTên chủ hộ: " + receivable.getLeases().getTenant().getName() +
+                        "\nNội dung cần thanh toán: \n" +
+                        "\n- Giá phòng: " + receivable.getLeases().getApartment().getPrice() + "VND" +
+                        "\n- Giá điện: " + receivable.getElectricBill().getUnit() + " (Số cũ: " + receivable.getElectricBill().getOldBillE() + "Số mới:" + receivable.getElectricBill().getOldBillE() + ")" +
+                        "\n- Thành tiền: " + separatePricing(receivable.getElectricBill().getOldBillE(), receivable.getElectricBill().getNewBillE(), receivable.getElectricBill().getUnit()) +
+                        "\n- Giá nước sạch: " + receivable.getWaterBill().getUnit() + " (Số cũ: " + receivable.getWaterBill().getOldBillW() + "Số mới:" + receivable.getWaterBill().getNewBillW() + ")" +
+                        "\n- Thành tiền: " + separatePricing(receivable.getWaterBill().getOldBillW(), receivable.getWaterBill().getNewBillW(), receivable.getWaterBill().getUnit()) +
+                        "\n- Các chi phí dịch phụ khác : " +
+                        "\t" +
+                        listServiceOtherOnAReservation(receivable) +
+                        "\n=> TỔNG CỘNG: " + calculatePayment(
+                        receivable.getElectricBill(), receivable.getWaterBill(), receivable, receivable.getLeases()
+                ) + " VND"
+                ;
+    }
+
+
+    @Scheduled(cron = "0 0 9 15 * ?") // 9h hang thang
+ @Scheduled(fixedDelay = 1000)
+    private void reminderPaid() {
+        List<Receivable> receivables = iReceivableRepository.findAllByStatus(EProcess.PROCESSING.getId());
+        for (Receivable receivable : receivables) {
+            sendMailToUser(receivable);
+        }
     }
 }
