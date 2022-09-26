@@ -8,7 +8,6 @@ import com.vmo.springboot.Demo.model.Apartment;
 import com.vmo.springboot.Demo.model.Leases;
 import com.vmo.springboot.Demo.repositories.IApartmentRepository;
 import com.vmo.springboot.Demo.repositories.ILeasesRepository;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

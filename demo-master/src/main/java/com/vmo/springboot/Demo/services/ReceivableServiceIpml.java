@@ -5,9 +5,8 @@ import com.vmo.springboot.Demo.dto.Request.ReceivableRequestDto;
 import com.vmo.springboot.Demo.dto.Respone.ReceivableResponseDto;
 import com.vmo.springboot.Demo.model.*;
 import com.vmo.springboot.Demo.repositories.IReceivableRepository;
-import com.vmo.springboot.Demo.services.Interface.IGenericService;
+
 import com.vmo.springboot.Demo.services.mail.MailService;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -220,7 +219,7 @@ public class ReceivableServiceIpml  {
 
 
         public void sendMailToUser(Receivable receivable)  {
-        String timeStamp = new SimpleDateFormat("yyyy.MM.dd").format(new java.util.Date());
+        String timeStamp = new SimpleDateFormat("yyyy.MM.DD").format(new java.util.Date());
         System.out.println("Test: " + timeStamp);
             try {
                 emailService.sendEmail(

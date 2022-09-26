@@ -1,14 +1,13 @@
 package com.vmo.springboot.Demo.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.vmo.springboot.Demo.dto.Request.ElectricBillRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table(name = "Electric_bill")
 @Builder

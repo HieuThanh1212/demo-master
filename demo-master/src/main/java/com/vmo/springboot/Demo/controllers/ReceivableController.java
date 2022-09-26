@@ -131,7 +131,6 @@ public class ReceivableController {
             return responseUtil.getSuccessResponse(receivableService.formatEmailReceivable(receivable));
         } catch (Exception e) {
             e.printStackTrace();
-
         } return null;
     }
 
