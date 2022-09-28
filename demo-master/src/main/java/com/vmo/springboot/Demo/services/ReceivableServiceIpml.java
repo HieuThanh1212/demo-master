@@ -12,7 +12,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
@@ -222,13 +224,20 @@ public class ReceivableServiceIpml  {
         String timeStamp = new SimpleDateFormat("yyyy.MM.DD").format(new java.util.Date());
         System.out.println("Test: " + timeStamp);
             try {
-                emailService.sendEmail(
+                emailService.sendmail(
+
                         receivable.getLeases().getTenant().getEmail(),
                         timeStamp + "[#Phong_" + receivable.getLeases().getApartment().getName() + "] HOÁ ĐƠN CẦN THANH TOÁN ",
                         formatEmailReceivable(receivable)
                 );
+                System.out.println("Test: ");
+//            } catch (MessagingException e) {
+//                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+
             } catch (MessagingException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
 
@@ -237,7 +246,7 @@ public class ReceivableServiceIpml  {
         return
                 "PHÍ DỊCH VỤ CĂN HỘ " + receivable.getLeases().getApartment().getName() +
                         "\nTên chủ hộ: " + receivable.getLeases().getTenant().getName() +
-                        "\nNội dung cần thanh toán: \n" +
+                        "\nNội dung  thanh toán: \n" +
                         "\n- Giá phòng: " + receivable.getLeases().getApartment().getPrice() + "VND" +
                         "\n- Giá điện: " + receivable.getElectricBill().getUnit() + " (Số cũ: " + receivable.getElectricBill().getOldBillE() + "Số mới:" + receivable.getElectricBill().getOldBillE() + ")" +
                         "\n- Thành tiền: " + separatePricing(receivable.getElectricBill().getOldBillE(), receivable.getElectricBill().getNewBillE(), receivable.getElectricBill().getUnit()) +

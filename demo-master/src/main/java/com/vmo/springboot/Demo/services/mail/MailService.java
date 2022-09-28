@@ -1,39 +1,53 @@
 package com.vmo.springboot.Demo.services.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Authenticator;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.io.IOException;
+import java.util.Date;
 import java.util.Properties;
 
 @Service
-public class MailService extends Authenticator {
+public class MailService  {
     @Autowired
     private JavaMailSender mailSender;
-    public String sendEmail(String setTo,String setSubject,String setText) throws MessagingException {
 
-        try {
-            // Create a Simple MailMessage.
-            SimpleMailMessage message = new SimpleMailMessage();
-            //message.setFrom(("hieuntph18781@fpt.edu.vn"));
-            message.setTo(setTo);
-            message.setSubject(setSubject);
-            message.setText(setText);
+    public String sendmail(String setTo,String setSubject,String setText) throws AddressException, MessagingException, IOException {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
 
-            // Send Message!
-            this.mailSender.send(message);
-            return "Email Sent!";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "sent failed";
-        }
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("veins1104@gmail.com", "pkurbxvrttznkemf");
+            }
+        });
 
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress("veins1104@gmail.com", false));
+
+        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("veins1104@gmail.com"));
+        msg.setSubject(setSubject);
+        msg.setText(setText);
+        msg.setText(setTo);
+
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
+        messageBodyPart.setContent("Tutorials point email", "text/html");
+
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(messageBodyPart);
+        MimeBodyPart attachPart = new MimeBodyPart();
+
+
+
+
+        return "ok";
     }
 
 
