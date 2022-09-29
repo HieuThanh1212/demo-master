@@ -9,6 +9,7 @@ import com.vmo.springboot.Demo.repositories.IReceivableRepository;
 import com.vmo.springboot.Demo.services.mail.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -16,10 +17,12 @@ import javax.mail.internet.AddressException;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 @Service
+@Component
 public class ReceivableServiceIpml  {
     @Autowired
     IReceivableRepository iReceivableRepository;
@@ -135,13 +138,13 @@ public class ReceivableServiceIpml  {
         return null;
     }
 
-    public Receivable getByNameReceivable(String name) {
-        return iReceivableRepository.findByName(name);
-    }
-
-    public Receivable getByNameReceivableAndStatus(String name, int status) {
-        return iReceivableRepository.findByNameAndStatus(name, status);
-    }
+//    public Receivable getByNameReceivable(String name) {
+//        return iReceivableRepository.findByName(name);
+//    }
+//
+//    public Receivable getByNameReceivableAndStatus(String name, int status) {
+//        return iReceivableRepository.findByNameAndStatus(name, status);
+//    }
 
     public ReceivableResponseDto getDetailById(int id) {
         Receivable receivable = getByIdReceivable(id);
@@ -221,24 +224,17 @@ public class ReceivableServiceIpml  {
 
 
         public void sendMailToUser(Receivable receivable)  {
-        String timeStamp = new SimpleDateFormat("yyyy.MM.DD").format(new java.util.Date());
+        String timeStamp = new SimpleDateFormat("yyyy.MM.DD").format(new Date());
         System.out.println("Test: " + timeStamp);
-            try {
-                emailService.sendmail(
+            emailService.sendSimpleEmail(
 
-                        receivable.getLeases().getTenant().getEmail(),
-                        timeStamp + "[#Phong_" + receivable.getLeases().getApartment().getName() + "] HOÁ ĐƠN CẦN THANH TOÁN ",
-                        formatEmailReceivable(receivable)
-                );
-                System.out.println("Test: ");
+                    "hihi"+receivable.getLeases().getTenant().getEmail(),
+                    timeStamp + "[#ROOM_" + receivable.getLeases().getApartment().getName().trim() + "] HOÁ ĐƠN CẦN THANH TOÁN ",
+                    formatEmailReceivable(receivable)
+            );
+            System.out.println("Test: ");
 //            } catch (MessagingException e) {
 //                e.printStackTrace();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
         }
 
     @Transactional

@@ -17,4 +17,8 @@ public class ResponeUltil {
         return new ResponseEntity<>(new ResponseDto(
                 HttpStatus.BAD_REQUEST.value(), message), HttpStatus.BAD_REQUEST);
     }
+    public ResponseEntity<ResponseDto> getInternalServerErrorResponse() {
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()),
+                HttpStatus.INTERNAL_SERVER_ERROR );
+    }
 }
